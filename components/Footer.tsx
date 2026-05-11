@@ -63,7 +63,6 @@ export default function Footer() {
                         </p>
                     </div>
 
-                    {/* Navigation Section. I have used Map to map the objects in the array */}
                     <div className="grid grid-cols-1 gap-10">
                         {footerSections.map((section) => (
                             <div key={section.title}>
@@ -103,7 +102,6 @@ export default function Footer() {
                         ))}
                     </div>
 
-                    {/* Copyright Section for Safety */}
                     <div className="text-center md:text-right">
                         <p className="text-sm text-slate-500">
                             © {currentYear} DoubtDesk
