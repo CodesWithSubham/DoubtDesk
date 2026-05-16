@@ -111,9 +111,9 @@ export default function Home() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(30,64,175,0.12),rgba(2,6,23,0.36)_72%)]" />
         </div>
         <section className="px-6 pb-12 relative z-10 pt-3 md:pt-6">
-          <div className="max-w-7xl mx-auto grid grid-cols-1 xl:grid-cols-[1.1fr_0.9fr] gap-12 xl:gap-16 items-center">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 xl:grid-cols-[1.1fr_0.9fr] gap-12 xl:gap-16 items-start">
             <div className="text-left">
-              <h2 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black text-white tracking-tight leading-[1.05] mb-6">
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black text-white tracking-tight leading-[1.08] mb-6">
                 Empower Your Learning with <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 drop-shadow-[0_0_14px_rgba(59,130,246,0.18)]">
                   Collaborative AI.
@@ -149,24 +149,22 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="relative">
-              <div className="relative rounded-2xl border border-blue-200/10 bg-slate-950/35 backdrop-blur-sm p-6 sm:p-8 shadow-[0_0_0_1px_rgba(59,130,246,0.05),0_20px_80px_rgba(2,6,23,0.42)]">
-                <div className="mb-6 text-[11px] font-semibold tracking-[0.32em] text-blue-300/70 uppercase">
-                  Live ecosystem preview
+            <div className="pt-2 xl:pt-3">
+              <div className="mb-6 text-[11px] font-semibold tracking-[0.32em] text-blue-300/70 uppercase">
+                Live ecosystem preview
+              </div>
+              <div className="space-y-4 text-base sm:text-lg text-slate-200">
+                <div className="flex items-start gap-3">
+                  <span className="text-blue-300/85 font-semibold">&gt;</span>
+                  <p>23 students discussing Operating Systems</p>
                 </div>
-                <div className="space-y-4 text-base sm:text-lg text-slate-200">
-                  <div className="flex items-start gap-3">
-                    <span className="text-blue-300/85 font-semibold">&gt;</span>
-                    <p>23 students discussing Operating Systems</p>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <span className="text-blue-300/85 font-semibold">&gt;</span>
-                    <p>12 new notes uploaded</p>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <span className="text-blue-300/85 font-semibold">&gt;</span>
-                    <p>4 active placement roadmaps</p>
-                  </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-blue-300/85 font-semibold">&gt;</span>
+                  <p>12 new notes uploaded</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-blue-300/85 font-semibold">&gt;</span>
+                  <p>4 active placement roadmaps</p>
                 </div>
               </div>
             </div>
