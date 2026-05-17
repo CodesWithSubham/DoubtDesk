@@ -30,6 +30,21 @@ import { Toaster } from "@/components/ui/sonner";
 import { useRouter, usePathname } from "next/navigation";
 import { KeyboardShortcutsProvider } from "@/components/KeyboardShortcutsProvider";
 import { CommandMenu } from "@/components/CommandMenu";
+import { ThemeProvider, useTheme } from "next-themes";
+
+function ThemedToaster() {
+    const { resolvedTheme } = useTheme();
+
+    return (
+        <Toaster
+            theme={resolvedTheme === "dark" ? "dark" : "light"}
+            closeButton
+            richColors
+            duration={4000}
+            position="top-right"
+        />
+    );
+}
 
 export function Provider({ children }: { children: React.ReactNode }) {
     const [appUser, setAppUser] = useState<AppUser | null>(null);
@@ -76,18 +91,14 @@ export function Provider({ children }: { children: React.ReactNode }) {
 
     return (
         <UserContext.Provider value={{ appUser, setAppUser, loading, refresh }}>
-            <KeyboardShortcutsProvider>
-                <SessionTracker />
-                {children}
-                <CommandMenu />
-                <Toaster
-                    theme="dark"
-                    closeButton
-                    richColors
-                    duration={4000}
-                    position="top-right"
-                />
-            </KeyboardShortcutsProvider>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="doubtdesk-theme">
+                <KeyboardShortcutsProvider>
+                    <SessionTracker />
+                    {children}
+                    <CommandMenu />
+                    <ThemedToaster />
+                </KeyboardShortcutsProvider>
+            </ThemeProvider>
         </UserContext.Provider>
     );
 }
