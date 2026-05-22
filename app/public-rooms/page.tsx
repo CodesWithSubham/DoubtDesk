@@ -14,6 +14,7 @@ export default function PublicRoomsPage() {
     const [customFilter, setCustomFilter] = useState("");
     const [isOthersActive, setIsOthersActive] = useState(false);
     const [appliedCustomFilter, setAppliedCustomFilter] = useState("");
+    const [appliedTagFilter, setAppliedTagFilter] = useState("");
 
     const fetcher = (url: string) => fetch(url).then(res => res.json());
 
@@ -28,6 +29,10 @@ export default function PublicRoomsPage() {
             if (subjectFilter) params.append("subject", subjectFilter);
         }
 
+        if (appliedTagFilter.trim()) {
+            params.append("tag", appliedTagFilter.trim());
+        }
+
         if (userName) params.append("userName", userName);
         params.append("page", (pageIndex + 1).toString());
         params.append("limit", "20");
@@ -36,6 +41,7 @@ export default function PublicRoomsPage() {
     };
 
     const fetchDoubts = async () => {
+        setAppliedTagFilter(tagFilter);
         mutate(); // Trigger SWR re-validation
     };
 
