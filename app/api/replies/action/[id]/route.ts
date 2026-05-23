@@ -18,6 +18,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         const user = await currentUser();
         if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         const email = user.primaryEmailAddress?.emailAddress;
+        if (!email) return NextResponse.json({ error: "Email required" }, { status: 400 });
 
         const [reply] = await db.select().from(repliesTable).where(eq(repliesTable.id, replyId)).limit(1);
         if (!reply) return NextResponse.json({ error: "Reply not found" }, { status: 404 });
@@ -65,6 +66,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
         const user = await currentUser();
         if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         const email = user.primaryEmailAddress?.emailAddress;
+        if (!email) return NextResponse.json({ error: "Email required" }, { status: 400 });
 
         const [reply] = await db.select().from(repliesTable).where(eq(repliesTable.id, replyId)).limit(1);
         if (!reply) return NextResponse.json({ error: "Reply not found" }, { status: 404 });

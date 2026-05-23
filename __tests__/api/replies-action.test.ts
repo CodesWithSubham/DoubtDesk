@@ -58,6 +58,22 @@ describe('Replies Action API Endpoint', () => {
         expect(json.error).toBe('Unauthorized');
     });
 
+    it('returns 400 when authenticated user has no email', async () => {
+        currentUserMock.mockResolvedValue({
+            primaryEmailAddress: null,
+        });
+
+        const req = new Request('http://localhost/api/replies/action/2', {
+            method: 'DELETE',
+        });
+
+        const res = await DELETE(req, { params: Promise.resolve({ id: '2' }) });
+        const json = await res.json();
+
+        expect(res.status).toBe(400);
+        expect(json.error).toBe('Email required');
+    });
+
     it('returns 403 for authenticated non-owner PATCH', async () => {
         currentUserMock.mockResolvedValue({
             primaryEmailAddress: { emailAddress: 'teacher@example.com' },
