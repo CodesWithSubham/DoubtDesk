@@ -35,6 +35,7 @@ export default function InfiniteDoubtFeed({
     emptyActionLabel
 }: InfiniteDoubtFeedProps) {
     const getKey = (pageIndex: number, previousPageData: any) => {
+    const getKey = ( pageIndex: number, previousPageData: null | { pagination?: { hasMore?: boolean } }) => {
         if (previousPageData && !previousPageData.pagination?.hasMore) return null;
 
 

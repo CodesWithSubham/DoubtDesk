@@ -23,13 +23,18 @@ interface Notification {
     createdAt: string;
 }
 
+interface NotificationData {
+    unreadCount: number;
+    notifications: Notification[];
+}
+
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export default function NotificationBell() {
     const [isOpen, setIsOpen] = useState(false)
 
     // Polling every 10 seconds for new notifications
-    const { data, error, mutate } = useSWR('/api/notifications', fetcher, {
+    const { data, error, mutate } = useSWR<NotificationData>('/api/notifications', fetcher, {
         refreshInterval: 10000, 
     })
 
@@ -39,7 +44,7 @@ export default function NotificationBell() {
 
     const markAsRead = async (id: number) => {
         // Optimistic update
-        mutate((currentData: any) => {
+        mutate((currentData: NotificationData | undefined) => {
             if (!currentData) return currentData
             return {
                 ...currentData,
@@ -66,7 +71,7 @@ export default function NotificationBell() {
     const markAllAsRead = async () => {
         if (unreadCount === 0) return
 
-        mutate((currentData: any) => {
+        mutate((currentData: NotificationData | undefined) => {
             if (!currentData) return currentData
             return {
                 ...currentData,

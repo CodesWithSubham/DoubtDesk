@@ -6,11 +6,24 @@ import AskDoubt from "./AskDoubt";
 import DoubtRepliesModal from "./DoubtRepliesModal";
 import { toast } from "sonner";
 import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
+import type { Doubt, Tag } from "@/types";
 
 interface DoubtCardProps {
-    doubt: any;
+    doubt: Doubt & {
+        tags?: Tag[];
+        hasBookmarked?: boolean;
+        hasLiked?: boolean;
+        replyCount?: number;
+    };
     onUpdate?: () => void;
-    onViewAISolution?: (doubt: any) => void;
+    onViewAISolution?: (
+        doubt: Doubt & {
+            tags?: Tag[];
+            hasBookmarked?: boolean;
+            hasLiked?: boolean;
+            replyCount?: number;
+        },
+    ) => void;
     role?: string;
 }
 
@@ -208,7 +221,7 @@ export default function DoubtCard({ doubt, onUpdate, onViewAISolution, role }: D
 
                     {(doubt.tags?.length ?? 0) > 0 && (
                         <div className="flex flex-wrap gap-2">
-                            {doubt.tags.map((tag: any) => (
+                            {doubt.tags?.map((tag: Tag) => (
                                 <span
                                     key={tag.id || tag.name}
                                     className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-300 text-[9px] font-black uppercase tracking-widest"
@@ -355,7 +368,7 @@ export default function DoubtCard({ doubt, onUpdate, onViewAISolution, role }: D
                         onClick={(e) => e.stopPropagation()}
                     >
                         <img
-                            src={doubt.imageUrl}
+                            src={doubt.imageUrl ?? undefined}
                             alt="Full View"
                             className="max-w-full max-h-full object-contain rounded-xl shadow-2xl border border-slate-200 dark:border-white/10"
                         />

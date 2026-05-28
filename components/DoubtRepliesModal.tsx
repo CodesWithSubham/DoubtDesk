@@ -5,6 +5,8 @@ import { X, Send, CheckCircle, MessageSquare, Loader2, Upload, File, ZoomIn, Mor
 import { toast } from "sonner";
 import MarkdownRenderer from "./MarkdownRenderer";
 import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
+import { Doubt } from "@/types";
+
 interface Reply {
     id: number;
     doubtId: number;
@@ -18,7 +20,7 @@ interface Reply {
 }
 
 interface DoubtRepliesModalProps {
-    doubt: any;
+    doubt: Doubt;
     isOpen: boolean;
     onClose: () => void;
     onReplyChange?: () => void;
