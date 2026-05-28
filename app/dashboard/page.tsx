@@ -10,19 +10,7 @@ import {
 } from "recharts"
 import { Skeleton } from "@/components/ui/skeleton"
 import RecommendedClassrooms from "@/components/RecommendedClassrooms";
-type AnalyticsData = {
-    trendingDoubts: any[];
-    mostAskedTopics: any[];
-    weakTopics: any[];
-    solvedStats: any[];
-    peakTime: any[];
-    engagement: {
-        totalStudents: number;
-        totalDoubts: number;
-        totalReplies: number;
-    };
-    topContributors: any[];
-}
+import { AnalyticsData, MostAskedTopic, SolvedStat, PeakTime, TopContributor, TrendingDoubt, WeakTopic } from "@/types"
 
 const COLORS = ["#3b82f6", "#8b5cf6", "#ec4899", "#f59e0b", "#10b981", "#06b6d4"];
 
@@ -79,14 +67,14 @@ export default function Dashboard() {
     }
 
     // Helper counts
-    const solvedCount = data?.solvedStats?.find((s: any) => s.status === 'solved')?.count || 0;
-    const unsolvedCount = data?.solvedStats?.find((s: any) => s.status !== 'solved')?.count || 0;
+    const solvedCount = data?.solvedStats?.find((s) => s.status === 'solved')?.count || 0;
+    const unsolvedCount = data?.solvedStats?.find((s) => s.status !== 'solved')?.count || 0;
     const totalDoubtStats = Number(solvedCount) + Number(unsolvedCount);
     const solvedPercentage = totalDoubtStats > 0 ? Math.round((Number(solvedCount) / totalDoubtStats) * 100) : 0;
 
     // Format peak hours data for Recharts AreaChart
-    const formattedPeakHours = data?.peakTime?.map((p: any) => ({
-        hour: `${p.hour}:00`,
+    const formattedPeakHours = data?.peakTime?.map((p) => ({
+        hour: typeof p.hour === 'string' ? p.hour : `${p.hour}:00`,
         count: Number(p.count)
     })) || [];
 
@@ -195,7 +183,7 @@ export default function Dashboard() {
                                         itemStyle={{ fontSize: '11px', color: '#fff', fontWeight: 'bold' }}
                                     />
                                     <Bar dataKey="count" fill="#3b82f6" radius={[0, 6, 6, 0]}>
-                                        {data.mostAskedTopics.map((entry: any, index: number) => (
+                                        {data.mostAskedTopics.map((entry, index) => (
                                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                         ))}
                                     </Bar>

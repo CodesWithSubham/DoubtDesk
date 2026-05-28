@@ -10,6 +10,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import useSWRInfinite from "swr/infinite";
 import { useInView } from "react-intersection-observer";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
+import { Doubt } from "@/types";
 
 export default function PublicRoomPage() {
     const params = useParams();
@@ -35,7 +36,7 @@ export default function PublicRoomPage() {
         setSize(1);
     };
 
-    const getKey = (pageIndex: number, previousPageData: any[]) => {
+    const getKey = (pageIndex: number, previousPageData: Doubt[] | null | undefined) => {
         if (previousPageData && !previousPageData.length) return null;
         const params = new URLSearchParams({
             subject,
@@ -99,7 +100,7 @@ export default function PublicRoomPage() {
             ) : doubts.length > 0 ? (
                 <>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {doubts.map((doubt: any, index: number) => (
+                        {doubts.map((doubt: Doubt, index: number) => (
                             <DoubtCard key={`${doubt.id}-${index}`} doubt={doubt} onUpdate={() => mutate()} />
                         ))}
                     </div>

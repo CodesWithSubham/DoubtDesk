@@ -5,9 +5,10 @@ import { Bookmark, Loader2, ArrowLeft } from "lucide-react";
 import DoubtCard from "@/components/DoubtCard";
 import { useRouter } from "next/navigation";
 import { useAppUser } from "@/app/provider";
+import { Doubt } from "@/types";
 
 export default function BookmarksPage() {
-    const [bookmarks, setBookmarks] = useState<any[]>([]);
+    const [bookmarks, setBookmarks] = useState<Doubt[]>([]);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
     const { appUser } = useAppUser();

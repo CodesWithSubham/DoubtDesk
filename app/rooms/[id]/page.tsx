@@ -41,6 +41,8 @@ import { toast } from "sonner";
 import useSWRInfinite from "swr/infinite";
 import { useInView } from "react-intersection-observer";
 
+import { Doubt, AnalyticsData, PersonalAnalytics } from "@/types";
+
 interface Classroom {
     id: number;
     name: string;
@@ -61,7 +63,7 @@ export default function ClassroomPage() {
     const [classroom, setClassroom] = useState<Classroom | null>(null);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState("ask-ai");
-    const [activeAIDoubt, setActiveAIDoubt] = useState<any>(null);
+    const [activeAIDoubt, setActiveAIDoubt] = useState<Doubt | null>(null);
     const [isAskModalOpen, setIsAskModalOpen] = useState(false);
     const [isCodeModalOpen, setIsCodeModalOpen] = useState(false);
     const [copied, setCopied] = useState(false);
@@ -96,7 +98,7 @@ export default function ClassroomPage() {
         setSize(1);
     };
 
-    const getKey = (pageIndex: number, previousPageData: any[]) => {
+    const getKey = (pageIndex: number, previousPageData: Doubt[]) => {
         if (previousPageData && !previousPageData.length) return null; // reached the end
         if (activeTab === 'insights') return null;
         const params = new URLSearchParams({
@@ -117,7 +119,7 @@ export default function ClassroomPage() {
         revalidateFirstPage: false
     });
 
-    const doubts = data ? [].concat(...data) : [];
+    const doubts = data ? [].concat(...data) : [] as Doubt[];
     const isLoadingMore = doubtsLoading || (size > 0 && data && typeof data[size - 1] === "undefined");
     const isReachingEnd = data && data[data.length - 1]?.length < 20;
 
@@ -296,7 +298,7 @@ export default function ClassroomPage() {
                                 <div className="flex justify-center p-12"><Loader2 className="w-6 h-6 text-blue-500 animate-spin" /></div>
                             ) : (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    {Array.isArray(doubts) && doubts.filter((d: any) => d.type === 'ai').map((doubt: any) => (
+                                    {Array.isArray(doubts) && doubts.filter((d) => d.type === 'ai').map((doubt) => (
                                         <DoubtCard
                                             key={doubt.id}
                                             doubt={doubt}
@@ -308,7 +310,7 @@ export default function ClassroomPage() {
                                             }}
                                         />
                                     ))}
-                                    {Array.isArray(doubts) && doubts.filter((d: any) => d.type === 'ai').length === 0 && (
+                                    {Array.isArray(doubts) && doubts.filter((d) => d.type === 'ai').length === 0 && (
                                         <div className="col-span-full py-12 text-center text-slate-500 dark:text-slate-500 text-xs font-bold uppercase tracking-widest opacity-30">
                                             No resolved AI queries in this classroom yet.
                                         </div>
@@ -440,10 +442,10 @@ export default function ClassroomPage() {
                                             <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-red-500/20 to-transparent"></div>
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                            {Array.isArray(doubts) && doubts.filter((d: any) => d.isSolved === "unsolved" || (!d.isSolved)).map((doubt: any) => (
+                                            {Array.isArray(doubts) && doubts.filter((d) => d.isSolved === "unsolved" || (!d.isSolved)).map((doubt) => (
                                                 <DoubtCard key={doubt.id} doubt={doubt} role={classroom?.role} onUpdate={() => mutate()} />
                                              ))}
-                                            {(!Array.isArray(doubts) || doubts.filter((d: any) => d.isSolved === "unsolved" || (!d.isSolved)).length === 0) && (
+                                            {(!Array.isArray(doubts) || doubts.filter((d) => d.isSolved === "unsolved" || (!d.isSolved)).length === 0) && (
                                                 <div className="col-span-full py-12 text-center text-slate-500 dark:text-slate-500 text-[10px] uppercase font-black tracking-widest opacity-40">
                                                     No unsolved queries in this category.
                                                 </div>
@@ -459,10 +461,10 @@ export default function ClassroomPage() {
                                             <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-amber-500/20 to-transparent"></div>
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                            {Array.isArray(doubts) && doubts.filter((d: any) => d.isSolved === "in-progress").map((doubt: any) => (
+                                            {Array.isArray(doubts) && doubts.filter((d) => d.isSolved === "in-progress").map((doubt) => (
                                                 <DoubtCard key={doubt.id} doubt={doubt} role={classroom?.role} onUpdate={() => mutate()} />
                                              ))}
-                                            {(!Array.isArray(doubts) || doubts.filter((d: any) => d.isSolved === "in-progress").length === 0) && (
+                                            {(!Array.isArray(doubts) || doubts.filter((d) => d.isSolved === "in-progress").length === 0) && (
                                                 <div className="col-span-full py-12 text-center text-slate-500 dark:text-slate-500 text-[10px] uppercase font-black tracking-widest opacity-40">
                                                     No doubts in progress right now.
                                                 </div>
@@ -478,10 +480,10 @@ export default function ClassroomPage() {
                                             <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent"></div>
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                            {Array.isArray(doubts) && doubts.filter((d: any) => d.isSolved === "solved").map((doubt: any) => (
+                                            {Array.isArray(doubts) && doubts.filter((d) => d.isSolved === "solved").map((doubt) => (
                                                 <DoubtCard key={doubt.id} doubt={doubt} role={classroom?.role} onUpdate={() => mutate()} />
                                             ))}
-                                            {(!Array.isArray(doubts) || doubts.filter((d: any) => d.isSolved === "solved").length === 0) && (
+                                            {(!Array.isArray(doubts) || doubts.filter((d) => d.isSolved === "solved").length === 0) && (
                                                 <div className="col-span-full py-12 text-center text-slate-500 dark:text-slate-500 text-[10px] uppercase font-black tracking-widest opacity-40">
                                                     No resolved queries yet.
                                                 </div>
@@ -593,10 +595,10 @@ export default function ClassroomPage() {
                                             <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-red-500/20 to-transparent"></div>
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                            {Array.isArray(doubts) && doubts.filter((d: any) => d.isSolved === "unsolved" || (!d.isSolved)).map((doubt: any) => (
+                                            {Array.isArray(doubts) && doubts.filter((d) => d.isSolved === "unsolved" || (!d.isSolved)).map((doubt) => (
                                                 <DoubtCard key={doubt.id} doubt={doubt} role={classroom?.role} onUpdate={() => mutate()} />
                                             ))}
-                                            {(!Array.isArray(doubts) || doubts.filter((d: any) => d.isSolved === "unsolved" || (!d.isSolved)).length === 0) && (
+                                            {(!Array.isArray(doubts) || doubts.filter((d) => d.isSolved === "unsolved" || (!d.isSolved)).length === 0) && (
                                                 <div className="col-span-full py-24 text-center space-y-4 bg-slate-100 dark:bg-white/5 border border-dashed border-slate-200 dark:border-white/10 rounded-[2.5rem]">
                                                     <GraduationCap className="w-12 h-12 text-slate-700 mx-auto" />
                                                     <p className="text-slate-500 dark:text-slate-500 font-bold uppercase tracking-widest text-xs">
@@ -618,10 +620,10 @@ export default function ClassroomPage() {
                                             <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-amber-500/20 to-transparent"></div>
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                            {Array.isArray(doubts) && doubts.filter((d: any) => d.isSolved === "in-progress").map((doubt: any) => (
+                                            {Array.isArray(doubts) && doubts.filter((d) => d.isSolved === "in-progress").map((doubt) => (
                                                 <DoubtCard key={doubt.id} doubt={doubt} role={classroom?.role} onUpdate={() => mutate()} />
                                             ))}
-                                            {(!Array.isArray(doubts) || doubts.filter((d: any) => d.isSolved === "in-progress").length === 0) && (
+                                            {(!Array.isArray(doubts) || doubts.filter((d) => d.isSolved === "in-progress").length === 0) && (
                                                 <div className="col-span-full py-12 text-center text-slate-500 dark:text-slate-500 text-[10px] uppercase font-black tracking-widest opacity-40">
                                                     No teacher doubts in progress right now.
                                                 </div>
@@ -637,10 +639,10 @@ export default function ClassroomPage() {
                                             <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent"></div>
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                            {Array.isArray(doubts) && doubts.filter((d: any) => d.isSolved === "solved").map((doubt: any) => (
+                                            {Array.isArray(doubts) && doubts.filter((d) => d.isSolved === "solved").map((doubt) => (
                                                 <DoubtCard key={doubt.id} doubt={doubt} role={classroom?.role} onUpdate={() => mutate()} />
                                             ))}
-                                            {(!Array.isArray(doubts) || doubts.filter((d: any) => d.isSolved === "solved").length === 0) && (
+                                            {(!Array.isArray(doubts) || doubts.filter((d) => d.isSolved === "solved").length === 0) && (
                                                 <div className="col-span-full py-12 text-center text-slate-500 dark:text-slate-500 text-[10px] uppercase font-black tracking-widest opacity-40">
                                                     No resolved queries yet.
                                                 </div>
@@ -724,7 +726,7 @@ export default function ClassroomPage() {
 
 // Simple implementations for sub-views or we can extract them later
 function ClassroomInsightsView({ classroomId, role }: { classroomId: number, role?: string }) {
-    const [data, setData] = useState<any>(null);
+    const [data, setData] = useState<AnalyticsData | null>(null);
     const [loading, setLoading] = useState(true);
 
     const isTeacher = role === 'teacher';
@@ -745,8 +747,8 @@ function ClassroomInsightsView({ classroomId, role }: { classroomId: number, rol
 
     if (loading) return <div className="flex justify-center p-20"><Loader2 className="w-8 h-8 text-blue-500 animate-spin" /></div>;
 
-    const solvedCount = data?.solvedStats.find((s: any) => s.status === 'solved')?.count || 0;
-    const unsolvedCount = data?.solvedStats.find((s: any) => s.status !== 'solved')?.count || 0;
+    const solvedCount = data?.solvedStats.find((s) => s.status === 'solved')?.count || 0;
+    const unsolvedCount = data?.solvedStats.find((s) => s.status !== 'solved')?.count || 0;
     const totalDoubtStats = Number(solvedCount) + Number(unsolvedCount);
     const solvedPercentage = totalDoubtStats > 0 ? (Number(solvedCount) / totalDoubtStats) * 100 : 0;
 
@@ -802,7 +804,7 @@ function ClassroomInsightsView({ classroomId, role }: { classroomId: number, rol
                         <span className="text-[10px] font-black uppercase text-slate-500 dark:text-slate-500 tracking-widest">By Doubt Volume</span>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {data?.mostAskedTopics.map((topic: any, i: number) => {
+                        {data?.mostAskedTopics.map((topic, i) => {
                             const intensity = Math.min(Number(topic.count) * 10, 100);
                             return (
                                 <div key={i} className="p-4 rounded-2xl border border-slate-200 dark:border-white/5 relative overflow-hidden group">
@@ -878,7 +880,7 @@ function ClassroomInsightsView({ classroomId, role }: { classroomId: number, rol
                                 { bg: 'bg-gradient-to-r from-slate-300/10 to-slate-400/10', border: 'border-slate-400/20', text: 'text-slate-300', icon: <Medal className="w-5 h-5 text-slate-700 dark:text-slate-300" />, glow: '' },
                                 { bg: 'bg-gradient-to-r from-orange-700/10 to-orange-600/10', border: 'border-orange-700/20', text: 'text-orange-400', icon: <Medal className="w-5 h-5 text-orange-400" />, glow: '' },
                             ];
-                            return data.topContributors.map((contributor: any, i: number) => {
+                            return data.topContributors.map((contributor, i) => {
                                 const style = rankStyles[i] || { bg: 'bg-white/5', border: 'border-white/10', text: 'text-slate-400', icon: null, glow: '' };
                                 return (
                                     <div
@@ -927,7 +929,7 @@ function ClassroomInsightsView({ classroomId, role }: { classroomId: number, rol
                 <div className="overflow-x-auto pb-4 w-full scrollbar-hide">
                     <div className="grid grid-cols-24 gap-1 h-32 items-end pt-4 min-w-[600px]">
                         {Array.from({ length: 24 }).map((_, hour) => {
-                            const activity = data?.peakTime.find((p: any) => p.hour === hour)?.count || 0;
+                            const activity = data?.peakTime.find((p) => p.hour === hour)?.count || 0;
                             const heightPercentage = Math.min((activity / 10) * 100, 100);
                             return (
                                 <div key={hour} className="group relative flex flex-col items-center gap-2">
@@ -955,8 +957,8 @@ function ClassroomInsightsView({ classroomId, role }: { classroomId: number, rol
                     <Zap className="w-5 h-5 text-yellow-400" /> AI Pedagogical Insights
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {data?.mostAskedTopics.filter((t: any) => t.severity !== 'Low').length > 0 ? (
-                        data?.mostAskedTopics.filter((t: any) => t.severity !== 'Low').map((topic: any, i: number) => (
+                    {(data?.mostAskedTopics.filter((t) => t.severity !== 'Low').length ?? 0) > 0 ? (
+                        data?.mostAskedTopics.filter((t) => t.severity !== 'Low').map((topic, i) => (
                             <div key={i} className="bg-gradient-to-br from-blue-600/10 to-purple-600/10 border border-slate-200 dark:border-white/10 rounded-[1.5rem] sm:rounded-[2.5rem] p-5 sm:p-8 flex flex-col sm:flex-row items-start gap-4 sm:gap-6 relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 p-4 border-l border-b border-slate-200 dark:border-white/5 bg-slate-100 dark:bg-white/5 rounded-bl-3xl">
                                     <Lightbulb className="w-5 h-5 text-yellow-400" />
@@ -990,7 +992,7 @@ function ClassroomInsightsView({ classroomId, role }: { classroomId: number, rol
 }
 
 function PersonalMentorView({ classroomId }: { classroomId: number }) {
-    const [personalData, setPersonalData] = useState<any>(null);
+    const [personalData, setPersonalData] = useState<PersonalAnalytics | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -1057,7 +1059,7 @@ function PersonalMentorView({ classroomId }: { classroomId: number }) {
                         <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">High Priority</span>
                     </div>
                     <div className="grid gap-4">
-                        {personalData.weakTopics.map((topic: any, i: number) => (
+                        {personalData.weakTopics.map((topic, i) => (
                             <div key={i} className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-[1.5rem] sm:rounded-[2rem] p-5 sm:p-6 hover:bg-slate-200 dark:hover:bg-white/[0.08] transition-all group relative overflow-hidden">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 relative z-10">

@@ -9,6 +9,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import useSWRInfinite from "swr/infinite";
 import { useInView } from "react-intersection-observer";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
+import { Doubt } from "@/types";
 
 export default function PublicRoomsPage() {
     const pathname = usePathname();
@@ -51,7 +52,7 @@ export default function PublicRoomsPage() {
         setSize(1);
     };
 
-    const getKey = (pageIndex: number, previousPageData: any[]) => {
+    const getKey = (pageIndex: number, previousPageData: Doubt[] | null | undefined) => {
         if (previousPageData && !previousPageData.length) return null;
         
         const userName = typeof window !== 'undefined' ? localStorage.getItem("anonymous_user") : "";
@@ -90,8 +91,8 @@ export default function PublicRoomsPage() {
         revalidateFirstPage: false
     });
 
-    const doubts = data ? [].concat(...data) : [];
-    const filteredDoubts = (doubts as any[]).filter((d) => {
+    const doubts = data ? [].concat(...data) : [] as Doubt[];
+    const filteredDoubts = doubts.filter((d) => {
         if (statusFilter === 'all') return true;
         if (statusFilter === 'unsolved') return d.isSolved === 'unsolved' || !d.isSolved;
         if (statusFilter === 'in-progress') return d.isSolved === 'in-progress';

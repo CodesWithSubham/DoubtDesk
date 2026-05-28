@@ -6,11 +6,12 @@ import {
     PieChart, Pie, Cell, Legend
 } from "recharts";
 import { Loader2, TrendingUp, AlertCircle, CheckCircle2, Users } from "lucide-react";
+import { TeacherAnalyticsData } from "@/types";
 
 const COLORS = ["#3b82f6", "#8b5cf6", "#ec4899", "#f59e0b", "#10b981"];
 
 export default function TeacherDashboard() {
-    const [data, setData] = useState<any>(null);
+    const [data, setData] = useState<TeacherAnalyticsData | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -53,7 +54,7 @@ export default function TeacherDashboard() {
                 {[
                     { label: "Top Struggle", value: data.topTopics[0]?.topic || "N/A", icon: AlertCircle, color: "text-red-400", bg: "bg-red-500/10" },
                     { label: "Most Active Room", value: data.subjectVolume[0]?.subject || "N/A", icon: TrendingUp, color: "text-blue-400", bg: "bg-blue-500/10" },
-                    { label: "Resolution Rate", value: `${Math.round((data.statusDistribution.find((s: any) => s.status === "solved")?.count || 0) / (data.statusDistribution.reduce((a: any, b: any) => a + b.count, 0) || 1) * 100)}%`, icon: CheckCircle2, color: "text-emerald-400", bg: "bg-emerald-500/10" }
+                    { label: "Resolution Rate", value: `${Math.round((data.statusDistribution.find((s) => s.status === "solved")?.count || 0) / (data.statusDistribution.reduce((a, b) => a + b.count, 0) || 1) * 100)}%`, icon: CheckCircle2, color: "text-emerald-400", bg: "bg-emerald-500/10" }
                 ].map((stat, i) => (
                     <div key={i} className="bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/5 rounded-3xl p-6 hover:border-slate-200 dark:hover:border-white/10 transition-colors">
                         <div className="flex items-center gap-4">
@@ -105,7 +106,7 @@ export default function TeacherDashboard() {
                                     dataKey="count"
                                     nameKey="status"
                                 >
-                                    {data.statusDistribution.map((entry: any, index: number) => (
+                                    {data.statusDistribution.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={entry.status === "solved" ? "#10b981" : "#ef4444"} stroke="transparent" />
                                     ))}
                                 </Pie>
@@ -135,7 +136,7 @@ export default function TeacherDashboard() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {data.subjectVolume.map((item: any, i: number) => (
+                            {data.subjectVolume.map((item, i) => (
                                 <tr key={i} className="hover:bg-white/[0.02] transition-colors">
                                     <td className="px-8 py-4">
                                         <span className="text-sm font-bold text-slate-900 dark:text-white">{item.subject}</span>
@@ -147,7 +148,7 @@ export default function TeacherDashboard() {
                                         <div className="w-24 h-1.5 bg-slate-50 dark:bg-slate-800 rounded-full overflow-hidden">
                                             <div
                                                 className="h-full bg-blue-500"
-                                                style={{ width: `${(item.count / data.subjectVolume.reduce((a: any, b: any) => a + b.count, 0)) * 100}%` }}
+                                                style={{ width: `${(item.count / data.subjectVolume.reduce((a, b) => a + b.count, 0)) * 100}%` }}
                                             />
                                         </div>
                                     </td>
