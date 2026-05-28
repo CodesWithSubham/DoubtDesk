@@ -50,15 +50,21 @@ export interface ModerationResult {
 /**
  * Determines whether moderation provider failures are retryable.
  */
-function shouldRetryModeration(error: any): boolean {
+function shouldRetryModeration(error: unknown): boolean {
     const retryableStatuses = [429, 500, 502, 503, 504];
+    const errorStatus =
+        typeof error === "object" && error !== null && "status" in error
+            ? (error as { status?: unknown }).status
+            : undefined;
 
-    if (retryableStatuses.includes(error?.status)) {
+    if (typeof errorStatus === "number" && retryableStatuses.includes(errorStatus)) {
         return true;
     }
 
     const message =
-        error?.message?.toLowerCase?.() || '';
+        typeof error === "object" && error !== null && "message" in error && typeof (error as { message?: unknown }).message === "string"
+            ? (error as { message: string }).message.toLowerCase()
+            : "";
 
     return (
         message.includes('timeout') ||
@@ -151,7 +157,7 @@ export async function moderateContent(
         return applyHeuristicModeration(content);
     }
 
-    let lastError: any = null;
+    let lastError: Error | null = null;
 
     for (
         let attempt = 0;
@@ -200,13 +206,14 @@ export async function moderateContent(
                 violationType:
                     result.violationType
             };
-        } catch (error: any) {
+        } catch (error: unknown) {
+            const err = error instanceof Error ? error : new Error(String(error));
             console.error(
                 "Moderation error:",
-                error
+                err
             );
 
-            lastError = error;
+            lastError = err;
 
             /**
              * Retry only transient moderation failures.
