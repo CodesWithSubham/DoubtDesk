@@ -70,6 +70,7 @@ export default function ClassroomPage() {
     const [subjectFilter, setSubjectFilter] = useState("All");
     const [tagFilter, setTagFilter] = useState("");
     const sort = (searchParams.get("sort") as DoubtSortValue) || "newest";
+    const notificationTab = searchParams.get("tab");
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -77,6 +78,12 @@ export default function ClassroomPage() {
         }, 500);
         return () => clearTimeout(timer);
     }, [searchVal]);
+
+    useEffect(() => {
+        if (notificationTab === "community" || notificationTab === "teacher-doubts" || notificationTab === "ask-ai" || notificationTab === "insights") {
+            setActiveTab(notificationTab);
+        }
+    }, [notificationTab]);
 
     const type = activeTab === 'teacher-doubts' ? 'teacher' : activeTab === 'community' ? 'community' : 'ai';
     const userName = typeof window !== 'undefined' ? localStorage.getItem("anonymous_user") : "";

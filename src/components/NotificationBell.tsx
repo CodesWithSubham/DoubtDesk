@@ -1,9 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Bell, Check, Loader2 } from "lucide-react"
 import useSWR from "swr"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import {
     Popover,
     PopoverContent,
@@ -12,14 +13,10 @@ import {
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { formatDistanceToNow } from "date-fns"
+import { toast } from "sonner"
+import type { NotificationRecord } from "@/lib/notifications/realtime"
 
-interface Notification {
-    id: number;
-    title: string;
-    message: string;
-    link: string | null;
-    type: string;
-    isRead: boolean;
+interface Notification extends NotificationRecord {
     createdAt: string;
 }
 
@@ -27,15 +24,66 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export default function NotificationBell() {
     const [isOpen, setIsOpen] = useState(false)
+    const router = useRouter()
 
-    // Polling every 10 seconds for new notifications
     const { data, error, mutate } = useSWR('/api/notifications', fetcher, {
-        refreshInterval: 10000, 
+        refreshInterval: 30000,
     })
 
     const unreadCount = data?.unreadCount || 0
     const notifications: Notification[] = data?.notifications || []
     const isLoading = !data && !error
+
+    useEffect(() => {
+        const source = new EventSource('/api/notifications/stream')
+
+        source.addEventListener('notification', (event) => {
+            const payload = JSON.parse((event as MessageEvent).data) as Notification
+
+            toast(payload.title, {
+                description: payload.message,
+                action: payload.link
+                    ? {
+                        label: "View",
+                        onClick: () => router.push(payload.link as string),
+                    }
+                    : undefined,
+            })
+
+            mutate((currentData: any) => {
+                if (!currentData) return currentData
+
+                const alreadyExists = currentData.notifications.some((notification: Notification) => notification.id === payload.id)
+                if (alreadyExists) {
+                    return currentData
+                }
+
+                toast(payload.title, {
+                    description: payload.message,
+                    action: payload.link
+                        ? {
+                            label: "View",
+                            onClick: () => router.push(payload.link as string),
+                        }
+                        : undefined,
+                })
+
+                return {
+                    ...currentData,
+                    unreadCount: (currentData.unreadCount || 0) + 1,
+                    notifications: [payload, ...currentData.notifications],
+                }
+            }, false)
+        })
+
+        source.onerror = () => {
+            // Keep the browser's built-in retry behavior active.
+        }
+
+        return () => {
+            source.close()
+        }
+    }, [mutate, router])
 
     const markAsRead = async (id: number) => {
         // Optimistic update
@@ -97,8 +145,8 @@ export default function NotificationBell() {
                 >
                     <Bell className="h-5 w-5 text-muted-foreground" />
                     {unreadCount > 0 && (
-                        <span className="absolute top-1.5 right-1.5 flex h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-background">
-                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
+                        <span className="absolute -top-1 -right-1 flex min-w-5 h-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-black text-white ring-2 ring-background">
+                            {unreadCount > 99 ? "99+" : unreadCount}
                         </span>
                     )}
                 </Button>

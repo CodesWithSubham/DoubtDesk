@@ -1,20 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MessageSquare, ThumbsUp, CheckCircle, Edit2, Trash2, X, ZoomIn, AlertTriangle, Pin, Bookmark, Clock } from "lucide-react";
 import AskDoubt from "./AskDoubt";
 import DoubtRepliesModal from "./DoubtRepliesModal";
 import { toast } from "sonner";
 import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
+import { useSearchParams } from "next/navigation";
 
 interface DoubtCardProps {
     doubt: any;
     onUpdate?: () => void;
     onViewAISolution?: (doubt: any) => void;
     role?: string;
+    openRepliesOnMount?: boolean;
 }
 
-export default function DoubtCard({ doubt, onUpdate, onViewAISolution, role }: DoubtCardProps) {
+export default function DoubtCard({ doubt, onUpdate, onViewAISolution, role, openRepliesOnMount = false }: DoubtCardProps) {
     const [isOwner, setIsOwner] = useState(false);
     const [isLiking, setIsLiking] = useState(false);
     const [isSolving, setIsSolving] = useState(false);
@@ -26,6 +28,8 @@ export default function DoubtCard({ doubt, onUpdate, onViewAISolution, role }: D
     const [isPinning, setIsPinning] = useState(false);
     const [isBookmarking, setIsBookmarking] = useState(false);
     const [likes, setLikes] = useState<number>(doubt.likes || 0);
+    const searchParams = useSearchParams();
+    const lastAutoOpenedThread = useRef<string | null>(null);
 
     const isTeacher = role === 'teacher';
 
@@ -35,6 +39,17 @@ export default function DoubtCard({ doubt, onUpdate, onViewAISolution, role }: D
             setIsOwner(true);
         }
     }, [doubt.userName]);
+
+    useEffect(() => {
+        const deepLinkedDoubtId = Number(searchParams.get("doubtId") || "") || null;
+        const shouldAutoOpen = openRepliesOnMount || deepLinkedDoubtId === doubt.id;
+        const autoOpenKey = shouldAutoOpen ? `${doubt.id}:${searchParams.get("doubtId") || ""}` : null;
+
+        if (shouldAutoOpen && autoOpenKey !== lastAutoOpenedThread.current) {
+            setIsRepliesOpen(true);
+            lastAutoOpenedThread.current = autoOpenKey;
+        }
+    }, [doubt.id, openRepliesOnMount, searchParams]);
 
     const handleAction = async (action: string) => {
         if (action === "like") {

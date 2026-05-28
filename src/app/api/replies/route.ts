@@ -9,6 +9,7 @@ import { inngest } from "@/inngest/client";
 import { parseAndValidateRequest } from "@/lib/validations/validate";
 import { createReplySchema } from "@/lib/validations/reply";
 import { DOUBT_STATUS } from "@/lib/doubtStatus";
+import { createReplyNotification } from "@/lib/notifications/service";
 
 export async function GET(req: Request) {
     try {
@@ -146,6 +147,20 @@ export async function POST(req: Request) {
             content: content || null,
             imageUrl: imageUrl || null,
         }).returning();
+
+        createReplyNotification({
+            doubtId,
+            replyId: newReply[0].id,
+            doubtOwnerEmail: doubt.userEmail || null,
+            replierEmail: email,
+            doubtTitle: doubt.subject || doubt.content || "your doubt",
+            replierName: userName,
+            replyContent: content || "",
+            classroomId: doubt.classroomId || null,
+            doubtType: doubt.type,
+        }).catch((notificationErr) => {
+            console.error("Failed to create reply notification:", notificationErr);
+        });
 
         // Auto-transition: unsolved -> in-progress on first reply.
         // Design notes:

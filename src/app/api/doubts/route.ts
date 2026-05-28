@@ -9,6 +9,7 @@ import { buildErrorResponse } from "@/lib/error-handler";
 import { checkUserBlock } from "@/lib/auth-utils";
 import { parseAndValidateRequest } from "@/lib/validations/validate";
 import { createDoubtSchema } from "@/lib/validations/doubt";
+import { createClassroomDoubtNotifications } from "@/lib/notifications/service";
 
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
@@ -253,6 +254,19 @@ export async function POST(req: Request) {
             classroomId: parsedClassroomId,
             type
         }).returning();
+
+        if (parsedClassroomId) {
+            createClassroomDoubtNotifications({
+                classroomId: parsedClassroomId,
+                doubtId: newDoubt.id,
+                subject,
+                authorEmail: email,
+                authorName: userName,
+                doubtType: type,
+            }).catch((notificationErr) => {
+                console.error("Failed to create classroom doubt notifications:", notificationErr);
+            });
+        }
 
         const normalizedTags: string[] = Array.from(new Set(
             (Array.isArray(tags) ? tags : [])
