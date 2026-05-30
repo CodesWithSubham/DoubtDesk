@@ -117,7 +117,7 @@ export default function PublicRoomsPage() {
         revalidateFirstPage: false
     });
 
-    const doubts = data ? [].concat(...data) : [] as Doubt[];
+    const doubts = (data ? [].concat(...data) : []) as Doubt[];
     
     // Apply local filters to pending doubts so they match the active view
     const matchingPendingDoubts = pendingDoubts.filter((d) => {

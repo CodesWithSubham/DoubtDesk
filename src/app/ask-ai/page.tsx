@@ -251,7 +251,7 @@ export default function AskAIPage() {
                 <table className="w-full text-sm text-left">{children}</table>
             </div>
         ),
-        thead: ({ children }: React.HTMLAttributes<HTMLTableCellElement>) => (
+        thead: ({ children }: React.HTMLAttributes<HTMLTableSectionElement>) => (
             <thead className="bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-200 dark:border-white/8">{children}</thead>
         ),
         tbody: ({ children }: React.HTMLAttributes<HTMLTableSectionElement>) => (
